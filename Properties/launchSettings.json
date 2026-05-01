@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Greenhouse Control (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Greenhouse Control (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
