@@ -14,23 +14,40 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Grid Padding="16" RowSpacing="12">
-        <Grid.Background>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+    <Grid>
+        <Grid.Resources>
+            <LinearGradientBrush x:Key="DisconnectedGradient" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#FFB04A57" Offset="0" />
+                <GradientStop Color="#FF8D3644" Offset="0.2" />
+                <GradientStop Color="#FF51242C" Offset="0.5" />
+                <GradientStop Color="#FF1B0F12" Offset="1" />
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="ConnectedGradient" StartPoint="0,0" EndPoint="0,1">
                 <GradientStop Color="#FF1F8A6B" Offset="0" />
                 <GradientStop Color="#FF1B6F61" Offset="0.2" />
                 <GradientStop Color="#FF2B3B3F" Offset="0.5" />
                 <GradientStop Color="#FF1B1D1F" Offset="1" />
             </LinearGradientBrush>
-        </Grid.Background>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+            <SolidColorBrush x:Key="ConnectionAccentBorderBrush" Color="#FF8D4A57" />
+        </Grid.Resources>
 
-        <Grid ColumnSpacing="16">
+        <Rectangle x:Name="DisconnectedBackground"
+                   Fill="{StaticResource DisconnectedGradient}"
+                   IsHitTestVisible="False"
+                   Opacity="1" />
+        <Rectangle x:Name="ConnectedBackground"
+                   Fill="{StaticResource ConnectedGradient}"
+                   IsHitTestVisible="False"
+                   Opacity="0" />
+
+        <Grid Padding="16" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid ColumnSpacing="16">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0"
@@ -39,14 +56,14 @@
                        FontSize="32"
                        FontWeight="SemiBold"
                        Text="Greenhouse Control" />
-            <Ellipse Grid.Column="1" Width="24" Height="24" Fill="#FFFF2D2D" />
-        </Grid>
+            </Grid>
 
-        <ScrollViewer Grid.Row="1"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer Grid.Row="1"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
             <Grid RowSpacing="12">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -60,6 +77,7 @@
                            Foreground="White" />
 
                 <Border Grid.Row="1"
+                        Width="554"
                         Background="#2B000000"
                         BorderBrush="#FF2A3A3D"
                         BorderThickness="0"
@@ -74,158 +92,174 @@
                         </Grid.ColumnDefinitions>
                         
                         <Border Grid.Column="0" Background="#3A000000"
-                                BorderBrush="#FF2F4A4E"
+                                BorderBrush="{StaticResource ConnectionAccentBorderBrush}"
                                 BorderThickness="1"
                                 CornerRadius="10"
                                 Padding="10">
                             <TextBox Header="Greenhouse IP"
                                      PlaceholderText="IP Address"
+                                     Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Width="150" />
                         </Border>
 
                         <Border Grid.Column="1"
                                 Background="#3A000000"
-                                BorderBrush="#FF2F4A4E"
+                                BorderBrush="{StaticResource ConnectionAccentBorderBrush}"
                                 BorderThickness="1"
                                 CornerRadius="10"
                                 Padding="10">
                             <TextBox Header="Greenhouse Port"
                                      PlaceholderText="Port Number"
+                                     Text="{Binding PortText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Width="150" />
                         </Border>
 
                         <Border Grid.Column="2"
                                 Background="#3A000000"
-                                BorderBrush="#FF2F4A4E"
+                                BorderBrush="{StaticResource ConnectionAccentBorderBrush}"
                                 BorderThickness="1"
                                 CornerRadius="10"
                                 Padding="10"
                                 HorizontalAlignment="Left">
                             
-                            <Button Width="140"
+                            <Button x:Name="ConnectButton"
+                                    Width="140"
                                     Height="36"
-                                    Content="Connect" />
+                                    Content="Connect"
+                                    Click="ConnectButton_Click" />
                         </Border>
                     </Grid>
                 </Border>
 
                 <TextBlock Grid.Row="2"
+                           Width="554"
+                           Margin="4,-4,0,0"
+                           FontSize="13"
+                           Foreground="White"
+                           Opacity="0.85"
+                           Text="{Binding StatusText}"
+                           TextWrapping="WrapWholeWords" />
+
+                <TextBlock Grid.Row="3"
                            Text="Configuration:"
                            FontSize="16"
                            FontWeight="SemiBold"
                            Foreground="White" />
                 
-                <Border Grid.Row="3"
-                        Background="#2B000000"
-                        BorderBrush="#FF2A3A3D"
-                        BorderThickness="0"
-                        CornerRadius="12"
-                        Padding="12">
+                <ContentControl Grid.Row="4"
+                                IsEnabled="{Binding IsReady}">
+                    <Border x:Name="ConfigurationPanel"
+                            Width="554"
+                            Background="#2B000000"
+                            BorderBrush="#FF2A3A3D"
+                            BorderThickness="0"
+                            CornerRadius="12"
+                            Padding="12">
 
-                    <Grid RowSpacing="4">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        
-                        <controls:SettingsCard Grid.Row="0"
-                                   Description="Toggle the lighting inside the greenhouse."
-                                   Header="Greenhouse lighting">
-                                <controls:SettingsCard.HeaderIcon>
-                                    <FontIcon Glyph="&#xE781;" />
-                                </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch />
-                        </controls:SettingsCard>
-                        
-                        <controls:SettingsExpander Grid.Row="1"
-                                    VerticalAlignment="Top"
-                                    Description="Settings for automatic watering."
-                                    Header="Automatic Watering">
-                            <controls:SettingsExpander.HeaderIcon>
-                                <FontIcon Glyph="&#xEB42;" />
-                            </controls:SettingsExpander.HeaderIcon>
-                            <ToggleSwitch />
-
-                            <controls:SettingsExpander.Items>
-                                <controls:SettingsCard Header="A basic SettingsCard within an SettingsExpander">
-                                    <Button Content="Button" />
-                                </controls:SettingsCard>
-                                <controls:SettingsCard Description="SettingsCard within an Expander can be made clickable too!"
-                                                    Header="This item can be clicked"
-                                                    IsClickEnabled="True" />
-
-                                <controls:SettingsCard ContentAlignment="Left">
-                                    <CheckBox Content="Here the ContentAlignment is set to Left. This is great for e.g. CheckBoxes or RadioButtons." />
-                                </controls:SettingsCard>
-
-                                <controls:SettingsCard HorizontalContentAlignment="Left"
-                                                    ContentAlignment="Vertical"
-                                                    Description="You can also align your content vertically. Make sure to set the HorizontalAlignment to Left when you do!"
-                                                    Header="Vertically aligned">
-                                    <GridView SelectedIndex="1">
-                                        <GridViewItem>
-                                            <Border Width="64"
-                                                    Height="64"
-                                                    Background="#0078D4"
-                                                    CornerRadius="4" />
-                                        </GridViewItem>
-                                        <GridViewItem>
-                                            <Border Width="64"
-                                                    Height="64"
-                                                    Background="#005EB7"
-                                                    CornerRadius="4" />
-                                        </GridViewItem>
-                                        <GridViewItem>
-                                            <Border Width="64"
-                                                    Height="64"
-                                                    Background="#003D92"
-                                                    CornerRadius="4" />
-                                        </GridViewItem>
-                                        <GridViewItem>
-                                            <Border Width="64"
-                                                    Height="64"
-                                                    Background="#001968"
-                                                    CornerRadius="4" />
-                                        </GridViewItem>
-                                    </GridView>
-                                </controls:SettingsCard>
-                                <controls:SettingsCard Description="You can override the Left indention of a SettingsCard by overriding the SettingsCardLeftIndention"
-                                                    Header="Customization">
-                                    <controls:SettingsCard.Resources>
-                                        <x:Double x:Key="SettingsCardLeftIndention">40</x:Double>
-                                    </controls:SettingsCard.Resources>
-                                </controls:SettingsCard>
-                            </controls:SettingsExpander.Items>
-                        </controls:SettingsExpander>
-
-                        <controls:SettingsExpander Grid.Row="2"
-                                    VerticalAlignment="Top"
-                                    Description="Power-related controls."
-                                    Header="Power options">
-                            <controls:SettingsExpander.HeaderIcon>
-                                <FontIcon Glyph="&#xE945;" />
-                            </controls:SettingsExpander.HeaderIcon>
-
-                            <controls:SettingsExpander.Items>
-                                <controls:SettingsCard Header="Turn off the greenhouse">
-                                    <Button Content="Shutdown" />
+                        <Grid RowSpacing="4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            
+                            <controls:SettingsCard Grid.Row="0"
+                                                   Width="530"
+                                                   Description="Toggle the lighting inside the greenhouse."
+                                                   Header="Greenhouse lighting">
                                     <controls:SettingsCard.HeaderIcon>
-                                        <FontIcon Glyph="&#xE7E8;" />
+                                        <FontIcon Glyph="&#xE781;" />
                                     </controls:SettingsCard.HeaderIcon>
-                                </controls:SettingsCard>
-                                <controls:SettingsCard Header="Reboot and start the greenhouse again">
-                                    <Button Content="Restart" />
-                                    <controls:SettingsCard.HeaderIcon>
-                                        <FontIcon Glyph="&#xE72C;" />
-                                    </controls:SettingsCard.HeaderIcon>
-                                </controls:SettingsCard>
-                            </controls:SettingsExpander.Items>
-                        </controls:SettingsExpander>
-                    </Grid>
-                </Border>
+                                <ToggleSwitch IsOn="{Binding IsLightingOn, Mode=TwoWay}"
+                                              Toggled="LightingToggle_Toggled" />
+                            </controls:SettingsCard>
+                            
+                            <controls:SettingsExpander Grid.Row="1"
+                                                       VerticalAlignment="Top"
+                                                       Description="Settings for automatic watering."
+                                                       Header="Automatic Watering"
+                                                       Width="530">
+                                <controls:SettingsExpander.HeaderIcon>
+                                    <FontIcon Glyph="&#xEB42;" />
+                                </controls:SettingsExpander.HeaderIcon>
+                                <ToggleSwitch IsOn="{Binding IsAutoWaterOn, Mode=TwoWay}"
+                                              Toggled="AutoWaterToggle_Toggled" />
+
+                                <controls:SettingsExpander.Items>
+                                    <controls:SettingsCard Header="Dispense amount" Description="Change how many seconds the water pump will run when activated.">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <Slider Minimum="1"
+                                                    Maximum="60"
+                                                    Width="120"
+                                                    Value="{Binding DispenseSeconds, Mode=TwoWay}"
+                                                    ValueChanged="DispenseSlider_ValueChanged"
+                                                    PointerReleased="DispenseSlider_PointerReleased"
+                                                    PointerCaptureLost="DispenseSlider_PointerCaptureLost"
+                                                    LostFocus="DispenseSlider_LostFocus" />
+                                            <TextBlock Text="{Binding DispenseSeconds}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <controls:SettingsCard.HeaderIcon>
+                                            <FontIcon Glyph="&#xE71C;" />
+                                        </controls:SettingsCard.HeaderIcon>
+                                    </controls:SettingsCard>
+                                    <controls:SettingsCard Header="Watering Frequency" Description="Change how many hours between each automatic watering cycle.">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <Slider Minimum="1"
+                                                    Maximum="48"
+                                                    Width="120"
+                                                    Value="{Binding FrequencyHours, Mode=TwoWay}"
+                                                    ValueChanged="FrequencySlider_ValueChanged"
+                                                    PointerReleased="FrequencySlider_PointerReleased"
+                                                    PointerCaptureLost="FrequencySlider_PointerCaptureLost"
+                                                    LostFocus="FrequencySlider_LostFocus" />
+                                            <TextBlock Text="{Binding FrequencyHours}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <controls:SettingsCard.HeaderIcon>
+                                            <FontIcon Glyph="&#xE916;" />
+                                        </controls:SettingsCard.HeaderIcon>
+                                    </controls:SettingsCard>
+                                </controls:SettingsExpander.Items>
+                            </controls:SettingsExpander>
+
+                            <controls:SettingsExpander Grid.Row="2"
+                                                       VerticalAlignment="Top"
+                                                       Description="Power-related controls."
+                                                       Header="Power options"
+                                                       Width="530">
+                                <controls:SettingsExpander.HeaderIcon>
+                                    <FontIcon Glyph="&#xE945;" />
+                                </controls:SettingsExpander.HeaderIcon>
+
+                                <controls:SettingsExpander.Items>
+                                    <controls:SettingsCard Header="Turn off the greenhouse">
+                                        <Button Content="Shutdown" Click="ShutdownButton_Click" />
+                                        <controls:SettingsCard.HeaderIcon>
+                                            <FontIcon Glyph="&#xE7E8;" />
+                                        </controls:SettingsCard.HeaderIcon>
+                                    </controls:SettingsCard>
+                                    <controls:SettingsCard Header="Reboot and start the greenhouse again">
+                                        <Button Content="Restart" Click="RestartButton_Click" />
+                                        <controls:SettingsCard.HeaderIcon>
+                                            <FontIcon Glyph="&#xE72C;" />
+                                        </controls:SettingsCard.HeaderIcon>
+                                    </controls:SettingsCard>
+                                    <controls:SettingsCard Header="Start water pump" Description="Toggle button to start the water pump.">
+                                        <ToggleButton Content="Start"
+                                                      Checked="PumpToggle_Checked"
+                                                      Unchecked="PumpToggle_Unchecked" />
+                                        <controls:SettingsCard.HeaderIcon>
+                                            <FontIcon Glyph="&#xEB42;" />
+                                        </controls:SettingsCard.HeaderIcon>
+                                    </controls:SettingsCard>
+                                </controls:SettingsExpander.Items>
+                            </controls:SettingsExpander>
+                        </Grid>
+                    </Border>
+                </ContentControl>
             </Grid>
-        </ScrollViewer>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Window>
+
