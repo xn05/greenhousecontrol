@@ -35,12 +35,12 @@ The JSON matches the fields in `server/server.config`.
 
 ### Runnable EXE (unpackaged)
 
-This produces a self-contained EXE, but the target machine still needs the Windows App Runtime.
+Release publish outputs are self-contained and include the .NET runtime in the publish folder. The target machine still needs the Windows App Runtime for WinUI unless you add Windows App SDK self-contained packaging.
 
 ```powershell
 # x64 example
 
-dotnet publish "C:\Users\Sartaj Singh\RiderProjects\greenhousecontrol\Greenhouse Control.csproj" -c Release -r win-x64 --self-contained true
+dotnet publish "C:\Users\Sartaj Singh\RiderProjects\greenhousecontrol\Greenhouse Control.csproj" -c Release -r win-x64 -p:SelfContained=true
 ```
 
 Output goes to `bin\Release\net8.0-windows10.0.19041.0\win-x64\publish\`.
@@ -48,5 +48,4 @@ Output goes to `bin\Release\net8.0-windows10.0.19041.0\win-x64\publish\`.
 ## Runtime requirements
 
 - Windows 10 version 19041 or higher
-- .NET 8.0 Runtime
 - Windows App Runtime (for EXE output)

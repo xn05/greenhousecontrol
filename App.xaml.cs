@@ -37,6 +37,7 @@ namespace Greenhouse_Control
         public App()
         {
             InitializeComponent();
+            RequestedTheme = ApplicationTheme.Dark;
         }
 
         /// <summary>

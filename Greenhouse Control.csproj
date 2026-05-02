@@ -11,6 +11,8 @@
     <WinUISDKReferences>false</WinUISDKReferences>
     <EnableMsixTooling>false</EnableMsixTooling>
     
+    <SelfContained>true</SelfContained>
+
     <Nullable>enable</Nullable>
     <DebugType>None</DebugType>
     <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
