@@ -31,3 +31,22 @@ The server responds with:
 
 The JSON matches the fields in `server/server.config`.
 
+## Build outputs
+
+### Runnable EXE (unpackaged)
+
+This produces a self-contained EXE, but the target machine still needs the Windows App Runtime.
+
+```powershell
+# x64 example
+
+dotnet publish "C:\Users\Sartaj Singh\RiderProjects\greenhousecontrol\Greenhouse Control.csproj" -c Release -r win-x64 --self-contained true
+```
+
+Output goes to `bin\Release\net8.0-windows10.0.19041.0\win-x64\publish\`.
+
+## Runtime requirements
+
+- Windows 10 version 19041 or higher
+- .NET 8.0 Runtime
+- Windows App Runtime (for EXE output)

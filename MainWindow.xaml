@@ -99,6 +99,7 @@
                             <TextBox Header="Greenhouse IP"
                                      PlaceholderText="IP Address"
                                      Text="{Binding IpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding IsDisconnected}"
                                      Width="150" />
                         </Border>
 
@@ -111,6 +112,7 @@
                             <TextBox Header="Greenhouse Port"
                                      PlaceholderText="Port Number"
                                      Text="{Binding PortText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding IsDisconnected}"
                                      Width="150" />
                         </Border>
 
@@ -262,4 +264,6 @@
         </Grid>
     </Grid>
 </Window>
+
+
 

@@ -33,8 +33,18 @@ namespace Greenhouse_Control.ViewModels
         public bool IsConnected
         {
             get => _isConnected;
-            set => SetProperty(ref _isConnected, value);
+            set
+            {
+                if (!SetProperty(ref _isConnected, value))
+                {
+                    return;
+                }
+
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsDisconnected)));
+            }
         }
+
+        public bool IsDisconnected => !_isConnected;
 
         public string StatusText
         {
@@ -77,15 +87,16 @@ namespace Greenhouse_Control.ViewModels
             return int.TryParse(PortText, out port) && port is > 0 and < 65536;
         }
 
-        private void SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        private bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (Equals(field, value))
             {
-                return;
+                return false;
             }
 
             field = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return true;
         }
 
         private static int Clamp(int value, int min, int max)
